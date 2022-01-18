@@ -21,9 +21,7 @@ module Pipedawg
     end
 
     def to_hash
-      out_hash = opts.clone
-      out_hash[:needs] = out_hash.fetch(:needs, []).map(&:name)
-      { "#{name}": out_hash.compact }
+      { "#{name}": opts.compact }
     end
   end
 end

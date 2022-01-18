@@ -31,7 +31,7 @@ module Pipedawg
     def update_stages
       stages = []
       opts[:jobs].each do |job|
-        stage = stage_from_needs(opts[:jobs], job)
+        stage = stage_from_needs(opts[:jobs], job.name)
         stages << stage
         job.opts[:stage] = stage.to_s
       end
@@ -40,11 +40,11 @@ module Pipedawg
 
     private
 
-    def stage_from_needs(jobs, job)
-      if job.opts.fetch(:needs, []) == []
+    def stage_from_needs(jobs, job_name)
+      if jobs.select { |job| job.name == job_name }[0].opts.fetch(:needs, []) == []
         1
       else
-        job.opts[:needs].map { |need| stage_from_needs(jobs, need) }.max + 1
+        jobs.select { |job| job.name == job_name }[0].opts[:needs].map { |need| stage_from_needs(jobs, need) }.max + 1
       end
     end
   end

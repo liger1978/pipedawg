@@ -1,6 +1,6 @@
 # Pipedawg
 
-Pull package version numbers from the web in various ways.
+Generate GitLab CI pipelines.
 
 ## Installation
 

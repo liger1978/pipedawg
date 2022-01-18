@@ -10,7 +10,6 @@ module Pipedawg
       @opts = {
         jobs: [Pipedawg::Job.new],
         stages: ['build'],
-        use_stages: true,
         workflow: {}
       }.merge(opts)
     end

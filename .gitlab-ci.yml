@@ -1,0 +1,14 @@
+---
+stages:
+- build
+workflow: {}
+build:
+  artifacts: {}
+  cache: {}
+  image:
+    name: ruby:2.5
+  needs: []
+  rules: []
+  script: []
+  stage: build
+  tags: []

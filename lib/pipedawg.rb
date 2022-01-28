@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pipedawg/job'
+require 'pipedawg/kaniko_job'
 require 'pipedawg/pipeline'
 require 'pipedawg/version'
 

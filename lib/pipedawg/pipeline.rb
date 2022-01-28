@@ -24,7 +24,7 @@ module Pipedawg
       JSON.parse(pipeline.to_json).to_yaml
     end
 
-    def to_yaml_file(file = '.gitlab-ci.yml')
+    def to_yaml_file(file = 'pipeline.yml')
       File.write(file, to_yaml)
     end
 

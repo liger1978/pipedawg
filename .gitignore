@@ -1,9 +1,9 @@
-/bin/
-/bundle/
+/.bundle/
 /.yardoc
 /_yardoc/
 /coverage/
 /doc/
+/pipeline.yml
 /pkg/
 /spec/reports/
 /tmp/

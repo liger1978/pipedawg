@@ -42,25 +42,13 @@ gem_job = Pipedawg::Job.new(
   script: ['bundle install', 'gem build *.gemspec']
 )
 
-docker_job = Pipedawg::Job.new(
-  'build:docker',
-  image: 'docker',
-  needs: ['build:gem'],
-  retry: 2,
-  script: [
-    'docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY',
-    'docker pull $CI_REGISTRY_IMAGE || true',
-    'docker build --pull --cache-from $CI_REGISTRY_IMAGE -t $CI_REGISTRY_IMAGE .',
-    'docker push $CI_REGISTRY_IMAGE'
-  ],
-  services: ['docker:dind']
+kaniko_job = Pipedawg::KanikoJob.new(
+  'build:kaniko',
+  {needs: ['build:gem'], retry: 2},
+  {context:'${CI_PROJECT_DIR}/docker',external_files: {'*.gem':'gems'}}
 )
 
-pipeline = Pipedawg::Pipeline.new 'build:image', jobs: [gem_job, docker_job]
-
-# Automatically calculates stages of jobs based on 'needs'
-pipeline.update_stages
-
+pipeline = Pipedawg::Pipeline.new 'build:image', jobs: [gem_job, kaniko_job]
 puts pipeline.to_yaml
 ```
 
@@ -84,23 +72,21 @@ build:gem:
   - gem build *.gemspec
   stage: '1'
   tags: []
-build:docker:
+build:kaniko:
   artifacts: {}
   cache: {}
-  image: docker
   needs:
   - build:gem
   retry: 2
   rules: []
   script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-  - docker pull $CI_REGISTRY_IMAGE || true
-  - docker build --pull --cache-from $CI_REGISTRY_IMAGE -t $CI_REGISTRY_IMAGE .
-  - docker push $CI_REGISTRY_IMAGE
+  - echo "{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}"
+    > "/kaniko/.docker/config.json"
+  - cp "*.gem" "${CI_PROJECT_DIR}/docker/gems"
+  - '"/kaniko/executor" --context "${CI_PROJECT_DIR}/docker" --dockerfile "Dockerfile"
+    --no-push'
   stage: '2'
   tags: []
-  services:
-  - docker:dind
 ```
 
 ## Development

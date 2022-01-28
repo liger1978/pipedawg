@@ -1,8 +1,11 @@
 ---
+require:
+  - rubocop-rspec
 AllCops:
   Exclude:
-    - 'bin/**/*'
-    - 'bundle/**/*'
+    - 'bin/*'
+    - 'vendor/**/*'
+    - '.bundle/**/*'
     - '*.gemspec'
   NewCops: enable
 
@@ -10,5 +13,4 @@ Metrics/BlockLength:
   Exclude:
     - 'Rakefile'
     - '**/*.rake'
-    - 'test/**/*.rb'
     - 'spec/**/*_spec.rb'

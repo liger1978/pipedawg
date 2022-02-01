@@ -60,7 +60,7 @@ module Pipedawg
         "--insecure-registry #{r}"
       end.join(' ')
       registry_certificates_cli = kaniko_opts[:registry_certificates].map do |k, v|
-        "----registry-certificate #{k}=\"#{v}\""
+        "--registry-certificate #{k}=\"#{v}\""
       end.join(' ')
       registry_mirrors_cli = Array(kaniko_opts[:registry_mirrors]).map { |r| "--registry-mirror #{r}" }.join(' ')
       skip_tls_verify_registrys_cli = Array(kaniko_opts[:skip_tls_verify_registry]).map do |r|

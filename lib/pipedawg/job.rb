@@ -13,7 +13,7 @@ module Pipedawg
         image: { name: 'ruby:2.5' },
         needs: [],
         retry: nil,
-        rules: [],
+        rules: nil,
         script: [],
         stage: 'build',
         tags: []

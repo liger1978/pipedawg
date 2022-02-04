@@ -23,7 +23,7 @@ module Pipedawg
         flags: [],
         ignore_paths: [],
         insecure_registries: [],
-        kaniko_image: {
+        image: {
           entrypoint: [''],
           name: 'gcr.io/kaniko-project/executor:debug'
         },
@@ -40,7 +40,7 @@ module Pipedawg
 
     def update # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       require 'json'
-      opts[:image] = kaniko_opts[:image]
+      opts[:image] = kaniko_opts[:image] if kaniko_opts[:image]
       script = ["echo #{kaniko_opts[:config].to_json.inspect} > \"#{kaniko_opts[:config_file]}\""]
       cert_copies = Array(kaniko_opts[:trusted_ca_cert_source_files]).map do |cert|
         "cat \"#{cert}\" >> \"#{kaniko_opts[:trusted_ca_cert_target_file]}\""

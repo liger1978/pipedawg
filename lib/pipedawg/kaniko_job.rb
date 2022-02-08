@@ -11,13 +11,12 @@ module Pipedawg
         config: {
           '$CI_REGISTRY': { username: '$CI_REGISTRY_USER', password: '$CI_REGISTRY_PASSWORD' }
         },
-        config_file: '/kaniko/.docker/config.json', context: '${CI_PROJECT_DIR}',
-        destinations: [], dockerfile: 'Dockerfile', executor: '/kaniko/executor',
-        external_files: {}, flags: [], ignore_paths: [], insecure_registries: [],
-        image: { entrypoint: [''], name: 'gcr.io/kaniko-project/executor:debug' },
-        options: {}, registry_certificates: {}, registry_mirrors: [],
-        skip_tls_verify_registry: [], trusted_ca_cert_source_files: [],
-        trusted_ca_cert_target_file: '/kaniko/ssl/certs/ca-certificates.crt'
+        config_file: '/kaniko/.docker/config.json', context: '${CI_PROJECT_DIR}', debug: true,
+        destinations: [], dockerfile: 'Dockerfile', executor: '/kaniko/executor', external_files: {},
+        flags: [], ignore_paths: [], insecure_registries: [],
+        image: { entrypoint: [''], name: 'gcr.io/kaniko-project/executor:debug' }, options: {},
+        registry_certificates: {}, registry_mirrors: [], skip_tls_verify_registry: [],
+        trusted_ca_cert_source_files: [], trusted_ca_cert_target_file: '/kaniko/ssl/certs/ca-certificates.crt'
       }.merge(kaniko_opts)
       super name, opts
       update
@@ -26,10 +25,18 @@ module Pipedawg
     def update # rubocop:disable Metrics/AbcSize
       require 'json'
       opts[:image] = kaniko_opts[:image] if kaniko_opts[:image]
-      opts[:script] = config + cert_copies + file_copies + Array(kaniko_cmd)
+      opts[:script] = debug + config + cert_copies + file_copies + Array(kaniko_cmd)
     end
 
     private
+
+    def debug
+      if kaniko_opts[:debug]
+        Pipedawg::Util.echo_proxy_vars
+      else
+        []
+      end
+    end
 
     def config
       ["echo #{kaniko_opts[:config].to_json.inspect} > \"#{kaniko_opts[:config_file]}\""]

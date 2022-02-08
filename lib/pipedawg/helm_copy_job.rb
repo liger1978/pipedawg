@@ -7,7 +7,7 @@ module Pipedawg
 
     def initialize(name = 'build', opts = {}, helm_opts = {})
       @helm_opts = {
-        chart: name,
+        chart: name, debug: true,
         destinations: [{ user: nil, password: nil, url: nil }],
         helm: 'helm',
         image: { entrypoint: [''], name: 'alpine/helm' },
@@ -17,12 +17,20 @@ module Pipedawg
       update
     end
 
-    def update
+    def update # rubocop:disable Metrics/AbcSize
       opts[:image] = helm_opts[:image] if helm_opts[:image]
-      opts[:script] = [] + pull + (helm_opts[:destinations].map { |d| push(d) }).flatten(1)
+      opts[:script] = debug + pull + (helm_opts[:destinations].map { |d| push(d) }).flatten(1)
     end
 
     private
+
+    def debug
+      if helm_opts[:debug]
+        Pipedawg::Util.echo_proxy_vars
+      else
+        []
+      end
+    end
 
     def pull
       case helm_opts[:url]

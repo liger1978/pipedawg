@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Pipedawg
-  # kaniko_job class
-  class KanikoJob < Job
+  # kaniko_build_job class
+  class KanikoBuildJob < Job
     attr_accessor :kaniko_opts
 
     def initialize(name = 'build', opts = {}, kaniko_opts = {}) # rubocop:disable Metrics/MethodLength

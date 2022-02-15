@@ -2,7 +2,7 @@
 
 module Pipedawg
   # qualys_scan_job class
-  class QualysScanJob < Job
+  class QualysScanJob < Job # rubocop:disable Metrics/ClassLength
     attr_accessor :qualys_opts
 
     def initialize(name = 'build', opts = {}, qualys_opts = {})
@@ -25,7 +25,8 @@ module Pipedawg
       opts[:rules] = qualys_opts[:rules] if qualys_opts[:rules]
       opts[:tags] = qualys_opts[:tags] if qualys_opts[:tags]
       opts[:variables] = qualys_opts[:variables] if qualys_opts[:variables]
-      opts[:script] = debug + config + image + token + scan_start + scan_complete + artifacts + severities + outputs
+      opts[:script] =
+        debug + config + image + clean_config + token + scan_start + scan_complete + artifacts + severities + outputs
     end
 
     private
@@ -55,6 +56,13 @@ module Pipedawg
         "docker image tag \"#{qualys_opts[:scan_image]}\" \"${image_target}\"",
         "image_id=$(docker inspect --format=\"{{index .Id}}\" \"#{qualys_opts[:scan_image]}\" | cut -c8-19)",
         'echo "Image ID: ${image_id}"'
+      ]
+    end
+
+    def clean_config
+      [
+        'rm -f "${CONFIG}/config.json"',
+        'rmdir "${CONFIG}"'
       ]
     end
 

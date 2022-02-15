@@ -9,6 +9,7 @@ module Pipedawg
         item.map { |i| expand_env_vars(i) }
       when Hash
         item.each { |k, v| item[k] = expand_env_vars(v) }
+        item.transform_keys! { |k| expand_env_vars(k) }
         item
       when String
         item.gsub(/\${([^} ]+)}/) do |e|

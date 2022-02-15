@@ -8,9 +8,9 @@ module Pipedawg
     def initialize(name = 'build', opts = {}, qualys_opts = {})
       @qualys_opts = {
         acceptable_risk: '${QUALYS_ACCEPTABLE_IMAGE_RISK}',
-        artifacts: {
-          expire_in: '1 month', paths: ['software.json', 'vulnerabilities.json'], when: 'always'
-        }, debug: true, gateway: '${QUALYS_GATEWAY}', image: nil, password: '${QUALYS_PASSWORD}', rules: nil,
+        artifacts: { expire_in: '1 month', paths: ['software.json', 'vulnerabilities.json'], when: 'always' },
+        config: { '$CI_REGISTRY': { username: '$CI_REGISTRY_USER', password: '$CI_REGISTRY_PASSWORD' } },
+        debug: true, gateway: '${QUALYS_GATEWAY}', image: nil, password: '${QUALYS_PASSWORD}', rules: nil,
         scan_image: '${QUALYS_IMAGE}', scan_target_prefix: 'qualys_scan_target', tags: nil, user: '${QUALYS_USERNAME}',
         variables: { GIT_STRATEGY: 'clone' }
       }.merge(qualys_opts)
@@ -25,7 +25,7 @@ module Pipedawg
       opts[:rules] = qualys_opts[:rules] if qualys_opts[:rules]
       opts[:tags] = qualys_opts[:tags] if qualys_opts[:tags]
       opts[:variables] = qualys_opts[:variables] if qualys_opts[:variables]
-      opts[:script] = debug + image + token + scan_start + scan_complete + artifacts + severities + outputs
+      opts[:script] = debug + config + image + token + scan_start + scan_complete + artifacts + severities + outputs
     end
 
     private
@@ -33,8 +33,7 @@ module Pipedawg
     def debug # rubocop:disable Metrics/MethodLength
       if qualys_opts[:debug]
         Pipedawg::Util.echo_proxy_vars + [
-          'echo Qualys settings:',
-          "echo   Qualys gateway: \"#{qualys_opts[:gateway]}\"",
+          'echo Qualys settings:', "echo   Qualys gateway: \"#{qualys_opts[:gateway]}\"",
           "echo   Qualys username: \"#{qualys_opts[:user]}\"",
           "if [ \"#{qualys_opts[:password]}\" != '' ]; then " \
           'echo   Qualys password is not empty; else ' \
@@ -45,10 +44,14 @@ module Pipedawg
       end
     end
 
+    def config
+      ['export CONFIG=$(mktemp -d)', "echo #{qualys_opts[:config].to_json.inspect} > \"${CONFIG}/config.json\""]
+    end
+
     def image
       [
         "image_target=\"#{qualys_opts[:scan_target_prefix]}:$(echo #{qualys_opts[:scan_image]} | sed 's/^[^/]*\\///'| sed 's/[:/]/-/g')\"", # rubocop:disable Layout/LineLength
-        "docker pull \"#{qualys_opts[:scan_image]}\"",
+        "docker --config=\"${CONFIG}\" pull \"#{qualys_opts[:scan_image]}\"",
         "docker image tag \"#{qualys_opts[:scan_image]}\" \"${image_target}\"",
         "image_id=$(docker inspect --format=\"{{index .Id}}\" \"#{qualys_opts[:scan_image]}\" | cut -c8-19)",
         'echo "Image ID: ${image_id}"'

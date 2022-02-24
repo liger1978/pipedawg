@@ -42,13 +42,13 @@ gem_job = Pipedawg::Job.new(
   script: ['bundle install', 'gem build *.gemspec']
 )
 
-kaniko_job = Pipedawg::KanikoJob.new(
+kaniko_build_job = Pipedawg::KanikoBuildJob.new(
   'build:kaniko',
   {needs: ['build:gem'], retry: 2},
   {context:'${CI_PROJECT_DIR}/docker',external_files: {'*.gem':'gems'}}
 )
 
-pipeline = Pipedawg::Pipeline.new 'build:image', jobs: [gem_job, kaniko_job]
+pipeline = Pipedawg::Pipeline.new 'build:image', jobs: [gem_job, kaniko_build_job]
 puts pipeline.to_yaml
 ```
 

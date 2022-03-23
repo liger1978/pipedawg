@@ -10,6 +10,7 @@ module Pipedawg
       @opts = {
         artifacts: {},
         cache: {},
+        debug: true,
         image: { name: 'ruby:2.5' },
         needs: [],
         retry: nil,
@@ -21,7 +22,18 @@ module Pipedawg
     end
 
     def to_hash
-      { "#{name}": opts.compact }
+      keys = %i[artifacts cache image needs retry rules script stage tags]
+      { "#{name}": opts.slice(*keys).compact }
+    end
+
+    private
+
+    def debug
+      if opts[:debug]
+        Pipedawg::Util.echo_proxy_vars
+      else
+        []
+      end
     end
   end
 end

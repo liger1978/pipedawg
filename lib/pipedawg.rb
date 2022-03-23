@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 require 'pipedawg/job'
-require 'pipedawg/helm_copy_job'
-require 'pipedawg/kaniko_build_job'
+require 'pipedawg/job/helm'
+require 'pipedawg/job/helm/copy'
+require 'pipedawg/job/kaniko'
+require 'pipedawg/job/kaniko/build'
+require 'pipedawg/job/qualys'
+require 'pipedawg/job/qualys/scan'
+require 'pipedawg/job/skopeo'
+require 'pipedawg/job/skopeo/copy'
 require 'pipedawg/pipeline'
-require 'pipedawg/qualys_scan_job'
-require 'pipedawg/skopeo_copy_job'
 require 'pipedawg/util'
 require 'pipedawg/version'
 

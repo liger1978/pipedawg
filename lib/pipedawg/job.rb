@@ -17,12 +17,13 @@ module Pipedawg
         rules: nil,
         script: [],
         stage: 'build',
-        tags: []
+        tags: [],
+        variables: nil
       }.merge(opts)
     end
 
     def to_hash
-      keys = %i[artifacts cache image needs retry rules script stage tags]
+      keys = %i[artifacts cache image needs retry rules script stage tags variables]
       { "#{name}": opts.slice(*keys).compact }
     end
 

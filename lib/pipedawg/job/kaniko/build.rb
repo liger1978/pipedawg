@@ -8,7 +8,7 @@ module Pipedawg
         def initialize(name, opts = {}) # rubocop:disable Metrics/MethodLength
           opts = {
             build_args: {},
-            config: { '$CI_REGISTRY': { username: '$CI_REGISTRY_USER', password: '$CI_REGISTRY_PASSWORD' } },
+            config: { auths: { '$CI_REGISTRY': { username: '$CI_REGISTRY_USER', password: '$CI_REGISTRY_PASSWORD' } } },
             config_file: '/kaniko/.docker/config.json', context: '${CI_PROJECT_DIR}',
             destinations: ['${CI_REGISTRY_IMAGE}:latest'], dockerfile: 'Dockerfile', external_files: {}, flags: [],
             ignore_paths: [], insecure_registries: [], options: {}, registry_certificates: {}, registry_mirrors: [],

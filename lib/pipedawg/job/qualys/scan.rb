@@ -9,9 +9,9 @@ module Pipedawg
           opts = {
             acceptable_risk: '${QUALYS_ACCEPTABLE_IMAGE_RISK}',
             artifacts: { expire_in: '1 month', paths: ['software.json', 'vulnerabilities.json'], when: 'always' },
-            config: { '$CI_REGISTRY': { username: '$CI_REGISTRY_USER', password: '$CI_REGISTRY_PASSWORD' } },
-            gateway: '${QUALYS_GATEWAY}', image: nil, password: '${QUALYS_PASSWORD}', rules: nil,
-            scan_image: '${QUALYS_IMAGE}', scan_target_prefix: 'qualys_scan_target', tags: nil,
+            config: { auths: { '$CI_REGISTRY': { username: '$CI_REGISTRY_USER', password: '$CI_REGISTRY_PASSWORD' } } },
+            gateway: '${QUALYS_GATEWAY}', image: nil, password: '${QUALYS_PASSWORD}',
+            scan_image: '${QUALYS_IMAGE}', scan_target_prefix: 'qualys_scan_target',
             user: '${QUALYS_USERNAME}', variables: { GIT_STRATEGY: 'clone' }
           }.merge(opts)
           super name, opts

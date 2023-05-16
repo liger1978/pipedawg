@@ -3,7 +3,7 @@
 require_relative 'lib/pipedawg/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'pipedawg'
+  spec.name          = 'pipedawg-vl'
   spec.version       = Pipedawg::VERSION
   spec.authors       = ['harbottle']
   spec.email         = ['harbottle@room3d3.com']

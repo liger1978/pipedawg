@@ -37,13 +37,7 @@ module Pipedawg
 
         def login
           opts.fetch(:logins, {}).map do |k, v|
-            begin
-              command = "echo \"#{v['password']}\" | #{opts[:command]} login --authfile \"${CONFIG}/config.json\" --username \"#{v['username']}\" --password-stdin \"#{k}\"" # rubocop:disable Layout/LineLength
-              `#{command}`
-              puts "Login succeeded for #{k}"
-            rescue RuntimeError => e
-              puts "Login failed for #{k}: #{e.message}"
-            end
+            "echo \"#{v['password']}\" | #{opts[:command]} login --authfile \"${CONFIG}/config.json\" --username \"#{v['username']}\" --password-stdin \"#{k}\" || echo \"Failed to login\"" # rubocop:disable Layout/LineLength
           end
         end
 

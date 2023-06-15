@@ -7,7 +7,7 @@ module Pipedawg
       class Copy < Job::Skopeo
         def initialize(name, opts = {})
           opts = {
-            config: {}, copy_image: name, destinations: [{ dest_image_name: nil, copy_image: nil, flags: [], options: {} }], flags: [],
+            config: {}, copy_image: name, destinations: [{ copy_image: nil, flags: [], options: {} }], flags: [],
             logins: {}, options: {}, stage: '${CI_PROJECT_DIR}/stage', trusted_ca_cert_source_files: [],
             trusted_ca_cert_target_file: '/etc/docker/certs.d/ca.crt'
           }.merge(opts)
@@ -18,7 +18,7 @@ module Pipedawg
         def update # rubocop:disable Metrics/AbcSize
           require 'json'
           opts[:script] = debug + config + cert_copies + login + mkstage + pull + (
-            opts[:destinations].map.with_index { |d, i| push(d, opts[:dest_image_names][i]) }
+            opts[:destinations].map { |d| push(d) }
           ).flatten(1)
         end
 
@@ -49,8 +49,8 @@ module Pipedawg
           copy(opts, "docker://#{opts[:copy_image]}", "\"dir://#{opts[:stage]}\"")
         end
 
-        def push(destination_opts, dest_image_name)
-          copy(destination_opts, "\"dir://#{opts[:stage]}\"", "docker://#{dest_image_name || destination_opts[:copy_image]}")
+        def push(destination_opts)
+          copy(destination_opts, "\"dir://#{opts[:stage]}\"", "docker://#{destination_opts[:copy_image]}")
         end
 
         def copy(copy_opts, source, destination)

@@ -11,7 +11,6 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Generate GitLab CI pipelines.'
   spec.description   = 'Generate GitLab CI pipelines.'
   spec.homepage      = 'https://github.com/ValdrinLushaj/pipedawg'
-  spec.license       = 'MIT'
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/ValdrinLushaj/pipedawg'

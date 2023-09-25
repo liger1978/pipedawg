@@ -50,7 +50,7 @@ module Pipedawg
             "image_target=\"#{opts[:scan_target_prefix]}:$(echo #{opts[:scan_image]} | sed 's/^[^/]*\\///'| sed 's/[:/]/-/g')\"", # rubocop:disable Layout/LineLength
             "docker --config=\"${CONFIG}\" pull \"#{opts[:scan_image]}\"",
             "docker image tag \"#{opts[:scan_image]}\" \"${image_target}\"",
-            "image_id=$(docker inspect --format=\"{{index .Id}}\" \"#{opts[:scan_image]}\" | cut -c8-19)",
+            "image_id=$(docker inspect --format=\"{{index .Id}}\" \"#{opts[:scan_image]}\" | sed 's/sha256://')",
             'echo "Image ID: ${image_id}"'
           ]
         end
@@ -69,7 +69,7 @@ module Pipedawg
         def scan_start
           [
             'while true; do ' \
-            "result=$(curl -s -o /dev/null -w ''%{http_code}'' --location --request GET \"https://#{opts[:gateway]}/csapi/v1.2/images/$image_id\" --header \"Authorization: Bearer $token\"); " + # rubocop:disable Layout/LineLength, Style/FormatStringToken
+            "result=$(curl -s -o /dev/null -w ''%{http_code}'' --location --request GET \"https://#{opts[:gateway]}/csapi/v1.3/images/$image_id\" --header \"Authorization: Bearer $token\"); " + # rubocop:disable Layout/LineLength, Style/FormatStringToken
               'echo "Waiting for scan to start..."; ' \
               'echo "  Result: ${result}"; ' \
               'if [ "${result}" = "200" ]; then break; fi; ' \
@@ -80,7 +80,7 @@ module Pipedawg
         def scan_complete
           [
             'while true; do ' \
-            "result=$(curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.2/images/$image_id\" --header \"Authorization: Bearer $token\" | jq -r '.scanStatus'); " + # rubocop:disable Layout/LineLength
+            "result=$(curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.3/images/$image_id\" --header \"Authorization: Bearer $token\" | jq -r '.scanStatus'); " + # rubocop:disable Layout/LineLength
               'echo "Waiting for scan to complete..."; ' \
               'echo "  Result: ${result}"; ' \
               'if [ "${result}" = "SUCCESS" ]; then break; fi; ' \
@@ -90,14 +90,14 @@ module Pipedawg
 
         def artifacts
           [
-            "curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.2/images/$image_id/software\" --header \"Authorization: Bearer $token\" | jq . > software.json", # rubocop:disable Layout/LineLength
-            "curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.2/images/$image_id/vuln\" --header \"Authorization: Bearer $token\" | jq . > vulnerabilities.json" # rubocop:disable Layout/LineLength
+            "curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.3/images/$image_id/software\" --header \"Authorization: Bearer $token\" | jq . > software.json", # rubocop:disable Layout/LineLength
+            "curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.3/images/$image_id/vuln\" --header \"Authorization: Bearer $token\" | jq . > vulnerabilities.json" # rubocop:disable Layout/LineLength
           ]
         end
 
         def severities
           [
-            "response=$(curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.2/images/$image_id/vuln/count\" --header \"Authorization: Bearer $token\")", # rubocop:disable Layout/LineLength
+            "response=$(curl -s --location --request GET \"https://#{opts[:gateway]}/csapi/v1.3/images/$image_id/vuln/count\" --header \"Authorization: Bearer $token\")", # rubocop:disable Layout/LineLength
             'severity5=$(jq -r ".severity5Count" <<< "${response}")',
             'severity4=$(jq -r ".severity4Count" <<< "${response}")'
           ]

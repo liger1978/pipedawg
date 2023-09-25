@@ -3,19 +3,18 @@
 require_relative 'lib/pipedawg/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'pipedawg'
+  spec.name          = 'pipedawg-vl'
   spec.version       = Pipedawg::VERSION
   spec.authors       = ['harbottle']
   spec.email         = ['harbottle@room3d3.com']
 
   spec.summary       = 'Generate GitLab CI pipelines.'
   spec.description   = 'Generate GitLab CI pipelines.'
-  spec.homepage      = 'https://github.com/liger1978/pipedawg'
-  spec.license       = 'MIT'
+  spec.homepage      = 'https://github.com/ValdrinLushaj/pipedawg'
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/liger1978/pipedawg'
-  spec.metadata['changelog_uri'] = 'https://github.com/liger1978/pipedawg'
+  spec.metadata['source_code_uri'] = 'https://github.com/ValdrinLushaj/pipedawg'
+  spec.metadata['changelog_uri'] = 'https://github.com/ValdrinLushaj/pipedawg'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

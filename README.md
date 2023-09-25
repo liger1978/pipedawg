@@ -106,7 +106,7 @@ To make this behaviour a default for all gem projects, the above line can be add
 
 ## Contributing
 
-Bug reports and pull requests are welcome on [GitHub](https://github.com/liger1978/pipedawg).
+Bug reports and pull requests are welcome on [GitHub](https://github.com/ValdrinLushaj/pipedawg).
 
 ## License
 
